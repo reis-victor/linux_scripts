@@ -1,23 +1,24 @@
 #!/bin/bash
 
-# This shell file should be executed as root
+#A Xorg/Gnome oriented bash script that creates a virtual resolution of 4k scaled to 2k in order to simulate a 'retina' display for 2k displays
 
 
-#Creates the following needed files
-
+#Creates the needed files: resolution_fix.sh and fix_resolution.desktop
 touch $HOME/resolution_fix.sh $HOME/.config/autostart/fix_resolution.desktop
 
-# Configures gnome resolution using 2x interface scaling zoom and creating a virtual resolution of 4k scaled to 2k in order to simulate a "retina" display
-echo "#!/bin/bash
-
+cat <<EOF > $HOME/resolution_fix.sh
+#2x UI(User Interface) scaling
 gsettings set org.gnome.desktop.interface scaling-factor 2
-gsettings set org.gnome.settings-daemon.plugins.xsettings overrides '{"Gdk/WindowScalingFactor": <2>}'
-xrandr --output DP-0 --panning 3840x2160 --scale 1.5x1.5" > $HOME/resolution_fix.sh
+gsettings set org.gnome.settings-daemon.plugins.xsettings overrides "[{'Gdk/WindowScalingFactor', <2>}]"
+#Virtual resolution of 4k scaled to 2k.
+xrandr --output DP-0 --panning 3840x2160 --scale 1.5x1.5
+EOF
 
+
+# Gives execute permission to all users
 chmod +x $HOME/resolution_fix.sh
 
 # Creates an autostart script for the resolution adjustment
-
 cat <<EOF > $HOME/.config/autostart/fix_resolution.desktop
 [Desktop Entry]
 Name=ResolutionFix
