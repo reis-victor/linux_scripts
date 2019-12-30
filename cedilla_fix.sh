@@ -9,7 +9,8 @@
 # [EN] Loads US-International keyboard layout
 # [PT-BR] Carrega o layout de teclado US-International
 loadkeys us-acentos
-# Enables cedilha for GTK and QT applications
-# Habilita a cedilha para aplicativos GTK e QT
+
+# [EN] Enables cedilha for GTK and QT applications
+# [PT-BR] Habilita a cedilha para aplicativos GTK e QT
 echo 'GTK_IM_MODULE="cedilla"
 QT_IM_MODULE="cedilla"' >> /etc/environment
