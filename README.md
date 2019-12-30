@@ -1,6 +1,4 @@
-# Linux scripts
-
-## How to execute the scripts?
+# How to execute the scripts?
 
 * Navigate to the folder (`cd` + `path`) and run `./file_name.sh`
   * If there is a permission error, run `chmod +x file_name.sh` or `/bin/sh file_name.sh`
