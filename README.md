@@ -7,8 +7,8 @@
   * If there is a permission error, run `chmod +x file_name.sh` or `/bin/sh file_name.sh`
   
 [PT-BR]
-* Navegue até a pasta (`cd` + `caminho`) e execute `./file_name.sh`
-  * Se houver um erro de permissão, execute `chmod +x file_name.sh` ou `/bin/sh file_name.sh`
+* Navegue até a pasta (`cd` + `caminho`) e execute `./nome_do_arquivo.sh`
+  * Se houver um erro de permissão, execute `chmod +x nome_do_arquivo.sh` ou `/bin/sh nome_do_arquivo.sh`
 
 
 
