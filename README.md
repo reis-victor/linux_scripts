@@ -2,6 +2,10 @@
 
 * Navigate to the folder (`cd` + `path`) and run `./file_name.sh`
   * If there is a permission error, run `chmod +x file_name.sh` or `/bin/sh file_name.sh`
+  
+### Arch Linux install
+
+   System, Utilities, minimal GNOME, Hi-Fi audio, disabled Wayland, fixed GRUB error when using f2fs filesystem, HiDPI 2k (Xorg/GNOME) and fixed cedilla (US-International keyboard layout)
 
 
 ###  2k Retina
