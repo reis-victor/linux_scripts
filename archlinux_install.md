@@ -1,7 +1,10 @@
 # Arch Linux setup
 
-## [DISCLAIMER] I'm not responsible for any error or issues that your system could experience using this setup. If you are unsure about the package names or settings, the ArchWiki is a great resource to learn about them
+### [DISCLAIMER] I'm not responsible for any error or issues that your system could experience using this setup. If you are unsure about the package names or settings, the [ArchWiki](https://wiki.archlinux.org/) is a great resource to learn about them
 
+## Recommendation
+
+Follow the [ArchWiki installation guide](https://wiki.archlinux.org/index.php/Installation_guide) during the setup
 
 
 * #### System
