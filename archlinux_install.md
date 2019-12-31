@@ -33,14 +33,16 @@ Install the packages using **pacman -S**:
 
 * #### Wi-Fi activation
 
-`systemctl enable NetworkManager
-systemctl start NetworkManager`
+`systemctl enable NetworkManager`
+
+`systemctl start NetworkManager`
 
 
 * #### Enable GNOME display manager (Graphical login)
 
-`systemctl enable gdm
-systemctl start gdm`
+`systemctl enable gdm`
+
+`systemctl start gdm`
 
 
 * #### Disable Wayland
