@@ -65,6 +65,7 @@ reboot
 * #### Hi-Fi audio adjustment
 
 `cp -R /etc/pulse/daemon.conf ~/.config/pulse/`
+
 `vim ~/.config/pulse/daemon.conf`
 
 Use the command `lscpu | grep Endian` to be sure that your cpu is little endian (le used for the sample format)
@@ -77,7 +78,9 @@ default-sample-rate = 192000
 alternate-sample-rate = 96000
 ```
 `cp -R /etc/asound.conf ~/.asoundrc`
+
 `vim ~/.asoundrc`
+
 Change the first code block "# Use PulseAudio by default" content to:
 
 ```
