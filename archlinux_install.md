@@ -11,14 +11,8 @@ Follow the [ArchWiki installation guide](https://wiki.archlinux.org/index.php/In
 
 `pacstrap /mnt base base-devel linux linux-firmware networkmanager intel-ucode f2fs-tools`
 
-Restart, then:
 
-
-* #### Update all dependencies
-
-`pacman -Syyu`
-
-Install the packages using **pacman -S**:
+Install the packages using **pacman -S** or append the options to the pacstrap:
 
 
 * #### Important utilities and NVIDIA driver
@@ -28,7 +22,7 @@ Install the packages using **pacman -S**:
 
 * #### GNOME minimal install
 
-`accountsservice gnome-color-manager gnome-control-center gnome-desktop xorg-xrandr xorg-server xorg-server-common xorg-xinit xorg-drivers gnome-keyring gnome-session gnome-shell gnome-terminal gnome-menus gnome-tweaks`
+`accountsservice gdm gnome-color-manager gnome-control-center gnome-desktop xorg-xrandr xorg-server xorg-server-common xorg-xinit xorg-drivers gnome-keyring gnome-session gnome-shell gnome-terminal gnome-menus gnome-tweaks`
 
 
 * #### Wi-Fi activation
@@ -78,7 +72,6 @@ default-sample-format = s32le
 default-sample-rate = 192000
 alternate-sample-rate = 96000
 ```
-reboot
 
 
 * #### HiDPI(retina) 2k resolution
