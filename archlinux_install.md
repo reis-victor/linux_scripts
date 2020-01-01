@@ -17,12 +17,15 @@ Install the packages using **pacman -S** or append the options to the pacstrap:
 
 * #### Important utilities and NVIDIA driver
 
-`pacman -S gufw zsh vim nvidia nvidia-settings`
-
+`pacman -S gufw zsh git vim nvidia nvidia-settings`
 
 * #### GNOME minimal install
 
 `accountsservice gdm gnome-color-manager gnome-control-center gnome-desktop xorg-xrandr xorg-server xorg-server-common xorg-xinit xorg-drivers gnome-keyring gnome-session gnome-shell gnome-terminal gnome-menus gnome-tweaks`
+
+* #### GNOME extra apps
+
+`nautilus eog sushi gnome-system-monitor`
 
 
 * #### Wi-Fi activation
