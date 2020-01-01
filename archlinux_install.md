@@ -27,16 +27,16 @@ Install the packages using **pacman -S** or append the options to the pacstrap:
 
 * #### Wi-Fi activation
 
-`systemctl enable NetworkManager`
+`systemctl enable NetworkManager.service`
 
-`systemctl start NetworkManager`
+`systemctl start NetworkManager.service`
 
 
 * #### Enable GNOME display manager (Graphical login)
 
-`systemctl enable gdm`
+`systemctl enable gdm.service`
 
-`systemctl start gdm`
+`systemctl start gdm.service`
 
 
 * #### Disable Wayland
