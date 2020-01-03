@@ -7,17 +7,17 @@
 Follow the [ArchWiki installation guide](https://wiki.archlinux.org/index.php/Installation_guide) during the setup.
 
 
-* #### System
+* #### System, network utility, Intel microcode, f2fs filesystem tools and vim text editor
 
-`pacstrap /mnt base base-devel linux linux-firmware networkmanager intel-ucode f2fs-tools`
+`pacstrap /mnt base base-devel linux linux-firmware networkmanager intel-ucode vim f2fs-tools`
 
 
 Install the packages using **pacman -S** or append the options to the pacstrap:
 
 
-* #### Important utilities and NVIDIA driver
+* #### Important utilities and Nvidia driver
 
-`pacman -S gufw zsh git vim nvidia nvidia-settings`
+`pacman -S gufw zsh git nvidia nvidia-settings`
 
 * #### GNOME minimal install
 
@@ -126,4 +126,10 @@ EOF
 
 `echo 'GTK_IM_MODULE="cedilla"
 QT_IM_MODULE="cedilla"' >> /etc/environment`
+
+
+* #### Change bash to zsh
+
+`chsh -s /bin/zsh` 
+
 
