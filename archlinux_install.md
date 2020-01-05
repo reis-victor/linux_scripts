@@ -28,6 +28,17 @@ Install the packages using **pacman -S** or append the options to the pacstrap:
 `nautilus eog sushi gnome-system-monitor`
 
 
+* #### Create your user, its password and provide root permissions
+
+Edit `visudo` using the previously installed text editor (vim, nano or emacs): `EDITOR=editor_name visudo`
+
+Uncomment the line `%wheel      ALL=(ALL) ALL`
+
+Create the user: `useradd -m user_name` and add its password `passwd user_name`
+
+Add the user to the uncommented wheel group, that has root permissions: `gpasswd -a user_name wheel`
+
+
 * #### Wi-Fi activation
 
 `systemctl enable NetworkManager.service`
