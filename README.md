@@ -2,10 +2,6 @@
 
 * Navigate to the folder (`cd` + `path`) and run `./file_name.sh`
   * If there is a permission error, run `chmod +x file_name.sh` or `/bin/sh file_name.sh`
-  
-### Arch Linux install
-
-   System, Utilities, minimal GNOME, Hi-Fi audio, disabled Wayland, fixed GRUB error when using f2fs filesystem, HiDPI 2k (Xorg/GNOME) and fixed cedilla (US-International keyboard layout)
 
 
 ###  2k Retina
@@ -16,4 +12,9 @@
 ###  Cedilla Fix
 
    A simple script that selects the US-International keyboard layout and enables the cedilla using the ```' + c``` keys combination
+   
+   
+### Arch Linux install
+
+   System installation, utilities, minimal GNOME Desktop Environment, Hi-Fi audio, disabled Wayland, fixed GRUB error when using f2fs filesystem, HiDPI 2k (Xorg/GNOME) and fixed cedilla (US-International keyboard layout)
    
