@@ -1,10 +1,13 @@
-# Arch Linux setup
+# Arch Linux installation, setup (GNOME Desktop Environment) and tweaks
 
-### [DISCLAIMER] I'm not responsible for any error or issues that your system could experience using this setup. If you are unsure about the package names or settings, the [ArchWiki](https://wiki.archlinux.org/) is a great resource to learn about them.
 
 ## Recommendation
 
 Follow the [ArchWiki installation guide](https://wiki.archlinux.org/index.php/Installation_guide) during the setup.
+
+
+
+### Packages
 
 
 * #### System, network utility, Intel microcode, f2fs filesystem tools and vim text editor
@@ -28,6 +31,10 @@ Install the packages using **pacman -S** or append the options to the pacstrap:
 `nautilus eog sushi gnome-system-monitor`
 
 
+
+### User creation and privileges
+
+
 * #### Create your user, its password and provide root permissions
 
 Edit `visudo` using the previously installed text editor (vim, nano or emacs): `EDITOR=editor_name visudo`
@@ -37,6 +44,10 @@ Uncomment the line `%wheel      ALL=(ALL) ALL`
 Create the user: `useradd -m user_name` and add its password `passwd user_name`
 
 Add the user to the uncommented wheel group, that has root permissions: `gpasswd -a user_name wheel`
+
+
+
+### System setup
 
 
 * #### Wi-Fi activation
@@ -53,24 +64,8 @@ Add the user to the uncommented wheel group, that has root permissions: `gpasswd
 `systemctl start gdm.service`
 
 
-* #### Disable Wayland
 
-`sudo vim /etc/gdm/custom.conf`
-
-Uncomment the line `WaylandEnable=false` to force gdm to use Xorg
-
-reboot
-
-
-* #### Hide GRUB's error message "error: sparse file not allowed. - press any key to continue booting"
-
-`sudo vim /etc/default/grub`
-
-Change the following value to false: `GRUB_SAVEDEFAULT=false`
-
-`sudo update-grub`
-
-reboot
+### System tweaks
 
 
 * #### Hi-Fi audio adjustment
@@ -144,3 +139,27 @@ QT_IM_MODULE="cedilla"' >> /etc/environment`
 `chsh -s /bin/zsh` 
 
 
+
+### Issues fix
+
+* #### Disable Wayland
+
+`sudo vim /etc/gdm/custom.conf`
+
+Uncomment the line `WaylandEnable=false` to force gdm to use Xorg
+
+reboot
+
+
+* #### Hide GRUB's error message "error: sparse file not allowed. - press any key to continue booting"
+
+`sudo vim /etc/default/grub`
+
+Change the following value to false: `GRUB_SAVEDEFAULT=false`
+
+`sudo update-grub`
+
+reboot
+
+
+### [DISCLAIMER] I'm not responsible for any error or issues that your system could experience using this setup.
