@@ -150,5 +150,9 @@ Uncomment the line `WaylandEnable=false` to force gdm to use Xorg
 
 reboot
 
+* #### Chromium crashing
+
+`xbps-install libva-vdpau-driver`
+
 
 ### [DISCLAIMER] I'm not responsible for any error or issues that your system could experience using this setup.
