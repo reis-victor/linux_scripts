@@ -140,24 +140,13 @@ QT_IM_MODULE="cedilla"' >> /etc/environment`
 
 
 
-### Issues fix
+### Issue fix
 
 * #### Disable Wayland
 
 `sudo vim /etc/gdm/custom.conf`
 
 Uncomment the line `WaylandEnable=false` to force gdm to use Xorg
-
-reboot
-
-
-* #### Hide GRUB's error message "error: sparse file not allowed. - press any key to continue booting"
-
-`sudo vim /etc/default/grub`
-
-Change the following value to false: `GRUB_SAVEDEFAULT=false`
-
-`sudo update-grub`
 
 reboot
 
