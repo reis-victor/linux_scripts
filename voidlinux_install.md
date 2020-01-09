@@ -65,6 +65,12 @@ Enable the non-free repository to install Nvidia and Intel microcode:
 `ln -s /etc/sv/gdm /var/service`
 
 
+* #### Enable ufw firewall service
+
+`ln -s /etc/sv/ufw /var/service`
+
+
+
 ### System tweaks
 
 
