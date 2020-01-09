@@ -13,11 +13,10 @@
 
    A simple script that selects the US-International keyboard layout and enables the cedilla using the ```' + c``` keys combination
    
+   
 ### HiFi Linux
 
    A few general settings to improve audio quality on Linux
    
-### Arch Linux install
 
-   System installation, utilities, minimal GNOME Desktop Environment, Hi-Fi audio, disabled Wayland, fixed GRUB error when using f2fs filesystem, HiDPI 2k (Xorg/GNOME) and fixed cedilla (US-International keyboard layout)
    
