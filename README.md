@@ -13,6 +13,9 @@
 
    A simple script that selects the US-International keyboard layout and enables the cedilla using the ```' + c``` keys combination
    
+### HiFi Linux
+
+   A few general settings to improve audio quality on Linux
    
 ### Arch Linux install
 
