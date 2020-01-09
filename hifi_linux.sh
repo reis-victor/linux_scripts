@@ -1,4 +1,4 @@
-# HiFI audio quality settings for Linux
+# Hi-Fi audio quality settings for Linux
 
 
 
