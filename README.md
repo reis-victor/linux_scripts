@@ -6,7 +6,7 @@
 
 ###  2k Retina
 
-   A Xorg/Gnome oriented bash script that creates a virtual resolution of 4k scaled to 2k in order to simulate a 'retina' resolution for 2k resolution displays
+   A Xorg/Gnome-oriented bash script that creates a virtual resolution of 4k scaled to 2k in order to simulate a 'retina' resolution for 2k resolution displays
   
 
 ###  Cedilla Fix
