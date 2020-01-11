@@ -23,4 +23,4 @@ rsync -aP $SOURCE_VAR $DESTINATION_VAR
 fi
 
 echo
-echo Done!
+echo Done
