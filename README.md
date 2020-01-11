@@ -18,5 +18,9 @@
 
    A few general settings to improve audio quality on Linux
    
+   
+### Backup
+
+   A simple script that makes incremental backups using rsync
 
    
