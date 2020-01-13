@@ -4,9 +4,9 @@
   * If there is a permission error, run `chmod +x file_name.sh` or `/bin/sh file_name.sh`
 
 
-###  2k Retina
+###  Retina Resolution
 
-   A Xorg/Gnome-oriented bash script that creates a virtual resolution of 4k scaled to 2k in order to simulate a 'retina' resolution for 2k resolution displays
+   A Xorg/Gnome-oriented bash script that creates a virtual resolution in order to simulate a 'retina' display
   
 
 ###  Cedilla Fix
