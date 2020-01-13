@@ -30,7 +30,7 @@ cat <<EOF > $HOME/retina_resolution.sh
 # 2x UI(User Interface) scaling
 gsettings set org.gnome.desktop.interface scaling-factor 2
 gsettings set org.gnome.settings-daemon.plugins.xsettings overrides "[{'Gdk/WindowScalingFactor', <2>}]"
-# 4k virtual resolution scaled to 2k.
+# Virtual resolution applied to the display
 xrandr --output $DISPLAY --panning $RESOLUTION --scale 1.5x1.5
 EOF
 
