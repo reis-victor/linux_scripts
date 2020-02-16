@@ -1,10 +1,11 @@
-echo -e "Please, select your Graphics card (1)Intel/(2)Nvidia" 
+echo -e "Please, select your Graphics card:
+Intel   |   Nvidia" 
 read GPU
 case "$GPU" in
-1)echo "Installing Intel Graphics"
+Intel)echo "Installing Intel Graphics"
   xbps-install -S mesa-dri vulkan-loader mesa-vulkan-intel intel-video-accel
 ;; 
-2)echo "Installing Nvidia"
+Nvidia)echo "Installing Nvidia"
   xbps-install -S nvidia
 ;;
 esac
