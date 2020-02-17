@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# Asks the GPU vendor and install the needed dependencies
+# Asks for the user input regarding its GPU model and install the needed dependencies
 echo -e "Please, select your Graphics card:
 Intel   |   Nvidia" 
 read GPU
@@ -18,7 +18,7 @@ xbps-install -S gnome gnome-terminal xorg-minimal xrandr socklog-void &&
 xbps-install -S void-repo-nonfree &&
 xbps-install -S intel-ucode gufw zsh git vim &&
 
-# Creates all services required by Gnome, socklog, and ufw. Also, removes the unused dhcpcd unused service.
+# Creates all services required by Gnome, socklog, and ufw. Also, removes the unused dhcpcd service
 ln -s /etc/sv/socklog-unix /var/service/ &&
 ln -s /etc/sv/nanoklogd /var/service/ &&
 ln -s /etc/sv/dbus /var/service &&
