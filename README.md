@@ -23,4 +23,6 @@
 
    A simple script that makes incremental backups using rsync
 
-   
+### Void Linux post-install 
+
+   This script installs GPU (Intel or Nvidia), Minimal Xorg and Gnome Desktop Environment, Vim text editor, Intel microcode,socklog syslog, gufw firewall, zsh shell, and git. Also, it creates all the required runit services and changes the shell to zsh.
