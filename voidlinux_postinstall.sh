@@ -1,3 +1,6 @@
+#! /bin/bash
+
+# Asks the GPU vendor and install the needed dependencies
 echo -e "Please, select your Graphics card:
 Intel   |   Nvidia" 
 read GPU
@@ -10,10 +13,12 @@ Nvidia)echo "Installing Nvidia"
 ;;
 esac
 
-xbps-install -S gnome gnome-terminal xorg-minimal xrandr socklog-void vim &&
+# Installs minimal xorg and gnome, also a few important utilities
+xbps-install -S gnome gnome-terminal xorg-minimal xrandr socklog-void &&
 xbps-install -S void-repo-nonfree &&
-xbps-install -S intel-ucode gufw zsh git &&
+xbps-install -S intel-ucode gufw zsh git vim &&
 
+# Creates all services required by Gnome, socklog, and ufw. Also, removes the unused dhcpcd unused service.
 ln -s /etc/sv/socklog-unix /var/service/ &&
 ln -s /etc/sv/nanoklogd /var/service/ &&
 ln -s /etc/sv/dbus /var/service &&
