@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# A Xorg/Gnome-oriented bash script that creates a virtual resolution in order to simulate a 'retina' display
+# A Xorg/Gnome-oriented bash script that creates virtual resolution in order to simulate a 'retina' display
 
 
 echo -e "Please, type your resolution (1)920x1080/(2)560x1440/(3)840x2160" 
@@ -19,7 +19,7 @@ esac
 
 
 # Creates the needed files: retina_resolution.sh and retina_resolution.desktop
-touch $HOME/retina_resolution.sh $HOME/.config/autostart/retina_resolution.desktop
+> $HOME/retina_resolution.sh && $HOME/.config/autostart/retina_resolution.desktop
 
 
 # Finds the primary output and assigns it to the connected_display variable
