@@ -22,6 +22,12 @@
 ### Backup
 
    A simple script that makes incremental backups using rsync.
+   
+   
+### Extension Changer
+
+   A simple extension renamer script thant changes the old extension to a new one in a given directory
+   
 
 ### Void Linux post-install 
 
