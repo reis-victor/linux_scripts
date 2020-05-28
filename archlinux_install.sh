@@ -41,13 +41,12 @@ mkdir /efi &&
 mount $EFI /efi &&
 
 # "yy" is used to be sure that the mirrorlist is updated and "u" upgrades the packages.Then, grub and efibootmgr are installed
-pacman -Syyu &&
-pacman -S grub efibootmgr &&
+yes | pacman -Syyu grub efibootmgr &&
 
 # Sets the zoneinfo, runs hwclock, creates locale file, and sets keyboard layout
 ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime &&
 hwclock --systohc &&
-sed -zi "s/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g" /etc/locale.gen &&
+sed -i "s/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g" /etc/locale.gen &&
 locale-gen  &&
 echo "KEYMAP=us-acentos" >> /etc/vconsole.conf &&
 
@@ -66,7 +65,7 @@ systemctl enable NetworkManager.service &&
 systemctl enable gdm.service &&
 
 # Unlocks all permissions to the wheel group
-sed -zi "s/#%wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g" &&
+visudo | sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g"
 
 # Asks for the root password
 echo "Input the root password"
