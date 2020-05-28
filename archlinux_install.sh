@@ -1,10 +1,13 @@
 #! /bin/bash
 
-echo "README: Create the partitions in the disks before executing the script. The script will FORMAT all the necessary partitions." 
+echo "README: Create the partitions before executing the script. The script will FORMAT all the necessary partitions." 
 echo
 read -p 'Do you really want to execute the script? Enter YES to proceed: ' START
 echo
 grep -q YES <<< $START || exit
+
+# Shows all disks and partitions
+lsblk
 
 # Saves important partitions and username to variables
 read -p 'Input the root partition (/dev/sdxx): ' ROOT &&
@@ -23,7 +26,7 @@ timedatectl set-ntp true &&
 mkfs.f2fs -f $ROOT && mount $ROOT /mnt && mkfs.vfat -F 32 $EFI && mkswap $SWAP && swapon $SWAP &&
 
 # Installs current Linux kernel and firmware, Arch base and base gnome minimal setup, f2fs filesystem driver, manuals, Intel drivers, and extra apps
-pacstrap /mnt base base-devel linux linux-firmware networkmanager intel-ucode vim f2fs-tools gufw zsh git firefox chromium man-db man-pages accountsservice gdm gnome-color-manager gnome-control-center gnome-desktop xorg-xrandr xorg-server xorg-server-common xorg-xinit xorg-drivers gnome-keyring gnome-session gnome-shell gnome-terminal gnome-menus gnome-tweaks nautilus eog sushi gnome-system-monitor intel-media-driver mesa mpv youtube-dl &&
+pacstrap /mnt base base-devel linux linux-firmware networkmanager intel-ucode vim f2fs-tools gufw zsh git firefox chromium man-db man-pages accountsservice gdm gnome-color-manager gnome-control-center gnome-desktop xorg-xrandr xorg-server xorg-server-common xorg-xinit xorg-drivers gnome-keyring gnome-session gnome-shell gnome-terminal gnome-menus gnome-tweaks nautilus eog sushi gnome-system-monitor intel-media-driver mesa python-pip mpv youtube-dl &&
 
 # Copies fstab content to /mnt/etc/fstab file
 genfstab -U /mnt >> /mnt/etc/fstab &&
@@ -37,7 +40,7 @@ EFI=$EFI
 USER=$USER
 
 # Creates efi directory and mounts its partition 
-mkdir /efi &&
+mkdir /efi && 
 mount $EFI /efi &&
 
 # "yy" is used to be sure that the mirrorlist is updated and "u" upgrades the packages.Then, grub and efibootmgr are installed
@@ -60,12 +63,10 @@ echo "127.0.0.1	localhost
 grub-install --target=x86_64-efi --efi-directory=efi --bootloader-id=GRUB &&
 grub-mkconfig -o /boot/grub/grub.cfg &&
 
-# Enables NetworkManager and gdm
+# Enables NetworkManager, gdm and ufw firewall services
 systemctl enable NetworkManager.service &&
 systemctl enable gdm.service &&
-
-# Unlocks all permissions to the wheel group
-visudo | sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g"
+systemctl enable ufw.service &&
 
 # Asks for the root password
 echo "Input the root password"
@@ -76,6 +77,7 @@ useradd -m $USER &&
 echo "Input the user password"
 passwd $USER &&
 gpasswd -a $USER wheel &&
+echo "Done! Edit visudo file to provide superuser permissions to the wheel group"
 EOF
 
 # Gives execute permission to the post_install.sh script
