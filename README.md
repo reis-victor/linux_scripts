@@ -27,12 +27,3 @@
 ### Extension Changer
 
    A simple extension renamer script that changes the old extension to a new one in a given directory
-   
-
-### Void Linux post-install 
-
-   This script installs GPU (Intel or Nvidia), Minimal Xorg and Gnome Desktop Environment, Vim text editor, Intel microcode,socklog syslog, gufw firewall, zsh shell, and git. Also, it creates all the required runit services and changes the shell to zsh.
-   
- ### Arch Linux install 
-
-   This script automates the Arch Linux install. It uses f2fs filesystem, GRUB EFI bootloader and a SWAP partition. All Arch Linux required files (it uses US-english language, us-acentos keyboard layout, and Sao Paulo timezone), essential GNOME system files/services, and Intel drivers are installed (and a few favorite apps). As well, it enables superuser privileges to your user :)
