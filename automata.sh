@@ -1,5 +1,12 @@
 #!/bin/bash
 
+echo "WARNING: This is not an official tool, it is only a personal script created by me and only intended to be used for checking basic information from the supportconfig extracted files. Furthermore, it can present innacurate retrieved information on some cases. So, you should always double check with the proper supportconfig files. I am not responsible for and assume no liability for any mistakes caused by the use of this script."
+read -p 'Input YES if you agree with the warning' WARNING
+grep -q !YES <<< exit
+grep -q YES <<< $WARNING &&
+
+echo "To easily use this script, add it to a folder and create an alias on your ~/.bashrc file. Then, execute the alias name within the extracted supportconfig folder".
+
 # .config file containing KSAR_PATH
 KSAR_PATH=~/.config/automata
 
