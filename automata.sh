@@ -50,7 +50,7 @@ else
       [[ -e ceph ]] && echo "CEPH admin"
 fi
 
-# Shows the most common words ocurrences related to system issues
+# Creates the file errors.txt with the ocurrences with the most common words that indicate an issue
 errors()
 {
     egrep -ri -e "error" -e "fail" -e "warning" -e "crash" -e "refused" -e "fatal" | sort -u > errors.txt
@@ -59,7 +59,7 @@ errors()
 read -p 'Input YES to create an errors.txt file with unique ocurrences of errors, fails, warnings, crashes and refusals?  ' ERRORS
 grep -q YES <<< $ERRORS && errors
 
-# Shows power ocurrences
+# Creates the file power.txt with power-related ocurrences
 power()
 {
     egrep -ri -e "shutdown" -e "reboot" | sort -u > power.txt
