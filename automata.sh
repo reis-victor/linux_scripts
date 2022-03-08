@@ -20,35 +20,40 @@ echo Kernel $(grep -oP '(?<=Linux ).*(?=-default)' basic-environment.txt | cut -
 # Shows if the kernel is tainted
 grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | grep -q "Tainted" && sed -n '/Status/,/^#/p' basic-health-check.txt | cut -d "#" -f3
 
-# Subscription Status
-grep -q "ACTIVE" updates.txt && grep -q "Standard Subscription" updates.txt && echo "Active Standard Subscription" || echo "Active Priority Subscription"
-grep -q "EXPIRED" updates.txt && echo -e "\033[31mEXPIRED SUBSCRIPTION\033[0m"
-
-# Quantity of available updates
-echo $(grep ^Found updates.txt | cut -d ":" -f1 | head -1)
 
 # If it is a Suse Manager
 # Checks if it is a SUMA Master and its version
-if [[ -e spacewalk-debug ]]
-   then	
+if [[ -d spacewalk-debug ]]
+   then
 	   echo "SUMA Master" $(grep '^susemanager' rpm.txt | awk '{print $6}' | head -n1)
-	 
+ 
 # Salt minions keys status
            sed -n '/Denied/,/^ *$/p' plugin-saltminionskeys.txt
 
 # Or checks if it is a SUMA Proxy or Minion
-elif [[ -e plugin-susemanagerproxy.txt ]]
+elif [[ -f plugin-susemanagerproxy.txt ]]
     then	
-	   echo "SUMA Proxy"
-	   
-elif [[ -e plugin-susemanagerclient.txt ]]
+	   echo "SUMA Proxy" && SUMA_CLIENT=1
+elif [[ -f plugin-susemanagerclient.txt ]]
     then	
-	   echo "SUMA Minion"
-
+	   echo "SUMA Minion" && SUMA_CLIENT=1
 else	   
 # Else, checks if it is a CEPH admin
-      [[ -e ceph ]] && echo "CEPH admin"
+      [[ -f ceph ]] && echo "CEPH admin"
 fi
+
+# Subscription Status
+if [[ -z "$SUMA_CLIENT" ]]
+   then
+       grep -q "ACTIVE" updates.txt && grep -q "Standard Subscription" updates.txt && echo "Active Standard Subscription" || grep -q "Priority Subscription" updates.txt && echo "Active Priority Subscription"
+       grep -q "EXPIRED" updates.txt && echo -e "\033[31mEXPIRED SUBSCRIPTION\033[0m"
+fi
+
+
+
+# Quantity of available updates
+echo $(grep ^Found updates.txt | cut -d ":" -f1 | head -1)
+
 
 # Creates the file errors.txt with the ocurrences with the most common words that indicate an issue
 errors()
