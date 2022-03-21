@@ -1,14 +1,7 @@
 #!/bin/bash
 
-echo "WARNING: This is not an official tool, it is only a personal script created by me and only intended to be used for checking basic information from the supportconfig extracted files. Furthermore, it can present innacurate retrieved information on some cases.So, you should always double check against the proper supportconfig files. I am not responsible for and assume no liability for any mistakes caused by the use of this script."
+#WARNING: This is not an official tool, it is only a personal script created to check basic information from the supportconfig extracted files. Furthermore, it can present innacurate retrieved #information on some cases.So, you should always double check against the proper supportconfig files. I am not responsible for and assume no liability for any mistakes caused by the use of #this script.
 
-echo "Do you wish to continue?"
-select yn in "Yes" "No"; do
-    case $yn in
-        Yes ) break;;
-        No ) exit;;
-    esac
-done
 
 echo "To easily use this script, add it to a folder and create an alias on your ~/.bashrc file. Then, execute the alias name within the extracted supportconfig folder".
 
@@ -20,33 +13,36 @@ echo Kernel $(grep -oP '(?<=Linux ).*(?=-default)' basic-environment.txt | cut -
 # Shows if the kernel is tainted
 grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | grep -q "Tainted" && sed -n '/Status/,/^#/p' basic-health-check.txt | cut -d "#" -f3
 
+#Subscription status
 
-# If it is a Suse Manager
 # Checks if it is a SUMA Master and its version
 if [[ -d spacewalk-debug ]]
-   then
-	   echo "SUMA Master" $(grep '^susemanager' rpm.txt | awk '{print $6}' | head -n1)
- 
+then
+    echo "SUMA Master" $(grep '^susemanager' rpm.txt | awk '{print $6}' | head -n1)
+
 # Salt minions keys status
-           sed -n '/Denied/,/^ *$/p' plugin-saltminionskeys.txt
+    sed -n '/Denied/,/^ *$/p' plugin-saltminionskeys.txt
 
 # Or checks if it is a SUMA Proxy or Minion
 elif [[ -f plugin-susemanagerproxy.txt ]]
-    then	
-	   echo "SUMA Proxy" && SUMA_CLIENT=1
+    then
+    echo "SUMA Proxy"
 elif [[ -f plugin-susemanagerclient.txt ]]
-    then	
-	   echo "SUMA Minion" && SUMA_CLIENT=1
-else	   
-# Else, checks if it is a CEPH admin
-      [[ -f ceph ]] && echo "CEPH admin"
-fi
-
-# Subscription Status
-if [[ -z "$SUMA_CLIENT" ]]
-   then
-       grep -q "ACTIVE" updates.txt && grep -q "Standard Subscription" updates.txt && echo "Active Standard Subscription" || grep -q "Priority Subscription" updates.txt && echo "Active Priority Subscription"
-       grep -q "EXPIRED" updates.txt && echo -e "\033[31mEXPIRED SUBSCRIPTION\033[0m"
+    then
+    echo "SUMA Minion"
+# If it is not SUSE Manager related, checks for an active subscription
+elif grep -q "ACTIVE" updates.txt
+    then
+    grep -q "Standard Subscription" updates.txt && echo "Standard Subscription"
+    grep -q "Priority Subscription" updates.txt && echo "Priority Subscription"
+# Checks for an expired subscription
+elif grep -q "EXPIRED" updates.txt
+    then
+    echo -e "EXPIRED"
+else
+# Checks if it is a SMT or RMT registered client
+    grep -q "SMT" updates.txt && echo "SMT Client"
+    grep -q "RMT" updates.txt && echo "RMT Client"
 fi
 
 
@@ -79,9 +75,9 @@ ksar()
     if [[ -e $KSAR_PATH ]]
     then
         source $KSAR_PATH 
-    else	    
+    else    
         read -p 'Please, input the kSar run.sh path: ' KSAR_RUN
-	read -p 'Make it a permanent path saving it to ~/.config ? ' PERMANENT_PATH
+    read -p 'Make it a permanent path saving it to ~/.config ? ' PERMANENT_PATH
         grep -q YES <<< $PERMANENT_PATH &&
         echo "KSAR_RUN=${KSAR_RUN}" > $KSAR_PATH
     fi
