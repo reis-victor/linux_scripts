@@ -14,8 +14,6 @@ echo Kernel $(grep -oP '(?<=Linux ).*(?=-default)' basic-environment.txt | cut -
 grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | grep -q "Tainted" && sed -n '/Status/,/^#/p' basic-health-check.txt | cut -d "#" -f3
 
 #Subscription status
-
-
 status_check()
 {
 if grep -q "ACTIVE" updates.txt
@@ -52,13 +50,17 @@ elif [[ -f plugin-susemanagerclient.txt ]]
     echo "SUMA Minion"
 fi
 
-# Checks if it is a SMT  Server or Client
+# Checks if it is a SMT Server or Client
 if grep -q "enabled" smt.txt
     then
     echo "SMT Server"
 elif grep -q "smt-client" rpm.txt
     then
     echo "SMT Client"
+# Checks if it is a RMT Server
+elif [[ -f plugin-rmt.txt ]]
+    then
+    echo "RMT Server"
 fi
 
 
@@ -90,18 +92,18 @@ ksar()
 {
     if [[ -e $KSAR_PATH ]]
     then
-        source $KSAR_PATH 
-    else    
+        source $KSAR_PATH
+    else
         read -p 'Please, input the kSar run.sh path: ' KSAR_RUN
     read -p 'Make it a permanent path saving it to ~/.config ? ' PERMANENT_PATH
         grep -q YES <<< $PERMANENT_PATH &&
         echo "KSAR_RUN=${KSAR_RUN}" > $KSAR_PATH
     fi
-    
+
     /bin/bash $KSAR_RUN
 }
 
 read -p 'Input YES to open a sar file:  ' KSAR
 echo
-grep -q YES <<< $KSAR && 
+grep -q YES <<< $KSAR &&
 ksar
