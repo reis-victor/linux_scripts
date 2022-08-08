@@ -15,14 +15,34 @@ grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | grep -q "Tainted" && 
 
 #Subscription status
 
+
+status_check()
+{
+if grep -q "ACTIVE" updates.txt
+    then
+    grep -q "Standard Subscription" updates.txt && echo "Standard Subscription"
+    grep -q "Priority Subscription" updates.txt && echo "Priority Subscription"
+# Checks for an expired subscription
+else grep -q "EXPIRED" updates.txt
+     echo -e "EXPIRED"
+fi
+}
+
+# Cloud packages check
+if  egrep -q "cloud-regionsrv-client|regionServiceClientConfigEC2|regionServiceCertsEC2|cloud-regionsrv-client-plugin-gce|regionServiceClientConfigGCE|regionServiceCertsGCE|regionServiceClientConfigAzure|regionServiceCertsAzure" rpm.txt
+    then
+    echo "Cloud packages installed"
+else
+    echo "Cloud packages not installed"
+fi
+
 # Checks if it is a SUMA Master and its version
 if [[ -d spacewalk-debug ]]
-then
+    then
+    status_check
     echo "SUMA Master" $(grep '^susemanager' rpm.txt | awk '{print $6}' | head -n1)
-
 # Salt minions keys status
     sed -n '/Denied/,/^ *$/p' plugin-saltminionskeys.txt
-
 # Or checks if it is a SUMA Proxy or Minion
 elif [[ -f plugin-susemanagerproxy.txt ]]
     then
@@ -30,19 +50,15 @@ elif [[ -f plugin-susemanagerproxy.txt ]]
 elif [[ -f plugin-susemanagerclient.txt ]]
     then
     echo "SUMA Minion"
-# If it is not SUSE Manager related, checks for an active subscription
-elif grep -q "ACTIVE" updates.txt
+fi
+
+# Checks if it is a SMT  Server or Client
+if grep -q "enabled" smt.txt
     then
-    grep -q "Standard Subscription" updates.txt && echo "Standard Subscription"
-    grep -q "Priority Subscription" updates.txt && echo "Priority Subscription"
-# Checks for an expired subscription
-elif grep -q "EXPIRED" updates.txt
+    echo "SMT Server"
+elif grep -q "smt-client" rpm.txt
     then
-    echo -e "EXPIRED"
-else
-# Checks if it is a SMT or RMT registered client
-    grep -q "SMT" updates.txt && echo "SMT Client"
-    grep -q "RMT" updates.txt && echo "RMT Client"
+    echo "SMT Client"
 fi
 
 
