@@ -21,8 +21,9 @@ if grep -q "ACTIVE" updates.txt
     grep -q "Standard Subscription" updates.txt && echo "Standard Subscription"
     grep -q "Priority Subscription" updates.txt && echo "Priority Subscription"
 # Checks for an expired subscription
-else grep -q "EXPIRED" updates.txt
-     echo -e "EXPIRED"
+elif grep -q "EXPIRED" updates.txt
+    then
+    echo -e "EXPIRED"
 fi
 }
 
