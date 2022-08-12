@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#WARNING: This is not an official tool, it is only a personal script created to check basic information from the supportconfig extracted files. Furthermore, it can present innacurate retrieved information on some cases. So, you should always double check against the proper supportconfig files. I am not responsible for and assume no liability for any mistakes caused by the use of this script.
+
+echo "To easily use this script, add it to a folder and create an alias on your ~/.bashrc file. Then, execute the alias name within the extracted supportconfig folder".
 
 # .config file containing KSAR_PATH
 KSAR_PATH=~/.config/automata
@@ -8,7 +11,6 @@ KSAR_PATH=~/.config/automata
 echo Kernel $(grep -oP '(?<=Linux ).*(?=-default)' basic-environment.txt | cut -d " " -f2)
 # Shows if the kernel is tainted
 grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | grep -q "Tainted" && sed -n '/Status/,/^#/p' basic-health-check.txt | cut -d "#" -f3
-
 
 #Subscription status
 status_check()
@@ -31,8 +33,6 @@ if  egrep -q "cloud-regionsrv-client|regionServiceClientConfigEC2|regionServiceC
 else
     echo "Cloud packages not installed"
 fi
-
-
 
 # Checks if it is a SUMA Master and its version
 if [[ -d spacewalk-debug ]] || grep -q "^susemanager" rpm.txt || grep -q "^SUSE-Manager-Server-release" rpm.txt
@@ -59,6 +59,9 @@ elif grep -q "smt-client" rpm.txt
 elif [[ -f plugin-rmt.txt ]]
     then
     echo "RMT Server"
+elif grep -q "susecloud" updates.txt
+    then
+    echo "Registered to a cloud SMT"
 else
     echo "Please, manually check the updates.txt file"
 fi
@@ -96,7 +99,7 @@ grep -q YES <<< $POWER && power
 # Adds ksar path and/or open the ksar app
 ksar()
 {
-    if [[ -e $KSAR_PATH ]]
+if [[ -e $KSAR_PATH ]]
     then
         source $KSAR_PATH
     else
@@ -104,8 +107,7 @@ ksar()
     read -p 'Make it a permanent path saving it to ~/.config ? ' PERMANENT_PATH
         grep -q YES <<< $PERMANENT_PATH &&
         echo "KSAR_RUN=${KSAR_RUN}" > $KSAR_PATH
-    fi
-
+fi
     /bin/bash $KSAR_RUN
 }
 
