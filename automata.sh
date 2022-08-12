@@ -1,9 +1,5 @@
 #!/bin/bash
 
-#WARNING: This is not an official tool, it is only a personal script created to check basic information from the supportconfig extracted files. Furthermore, it can present innacurate retrieved #information on some cases.So, you should always double check against the proper supportconfig files. I am not responsible for and assume no liability for any mistakes caused by the use of #this script.
-
-
-echo "To easily use this script, add it to a folder and create an alias on your ~/.bashrc file. Then, execute the alias name within the extracted supportconfig folder".
 
 # .config file containing KSAR_PATH
 KSAR_PATH=~/.config/automata
@@ -12,6 +8,7 @@ KSAR_PATH=~/.config/automata
 echo Kernel $(grep -oP '(?<=Linux ).*(?=-default)' basic-environment.txt | cut -d " " -f2)
 # Shows if the kernel is tainted
 grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | grep -q "Tainted" && sed -n '/Status/,/^#/p' basic-health-check.txt | cut -d "#" -f3
+
 
 #Subscription status
 status_check()
@@ -23,36 +20,36 @@ if grep -q "ACTIVE" updates.txt
 # Checks for an expired subscription
 elif grep -q "EXPIRED" updates.txt
     then
-    echo -e "EXPIRED"
+     echo -e "EXPIRED"
 fi
 }
 
 # Cloud packages check
 if  egrep -q "cloud-regionsrv-client|regionServiceClientConfigEC2|regionServiceCertsEC2|cloud-regionsrv-client-plugin-gce|regionServiceClientConfigGCE|regionServiceCertsGCE|regionServiceClientConfigAzure|regionServiceCertsAzure" rpm.txt
     then
-    echo "Cloud packages installed"
+    echo "Cloud packages installed" && CLOUD=1
 else
     echo "Cloud packages not installed"
 fi
 
+
+
 # Checks if it is a SUMA Master and its version
-if [[ -d spacewalk-debug ]]
+if [[ -d spacewalk-debug ]] || grep -q "^susemanager" rpm.txt || grep -q "^SUSE-Manager-Server-release" rpm.txt
     then
     status_check
-    echo "SUMA Master" $(grep '^susemanager' rpm.txt | awk '{print $6}' | head -n1)
+    grep -o 'SUSE Manager release.*' basic-environment.txt
 # Salt minions keys status
-    sed -n '/Denied/,/^ *$/p' plugin-saltminionskeys.txt
+    sed -n '/Denied/,/^ *$/p' plugin-saltminionskeys.txt && SUMA=1
 # Or checks if it is a SUMA Proxy or Minion
 elif [[ -f plugin-susemanagerproxy.txt ]]
     then
-    echo "SUMA Proxy"
-elif [[ -f plugin-susemanagerclient.txt ]]
+    echo "SUMA Proxy" && SUMA=1
+elif [[ -f plugin-susemanagerclient.txt ]] || grep -q "venv-salt-minion" rpm.txt
     then
-    echo "SUMA Minion"
-fi
-
+    echo "SUMA Minion" && SUMA=1
 # Checks if it is a SMT Server or Client
-if grep -q "enabled" smt.txt
+elif grep -q "enabled" smt.txt
     then
     echo "SMT Server"
 elif grep -q "smt-client" rpm.txt
@@ -62,8 +59,16 @@ elif grep -q "smt-client" rpm.txt
 elif [[ -f plugin-rmt.txt ]]
     then
     echo "RMT Server"
+else
+    echo "Please, manually check the updates.txt file"
 fi
 
+if [[ $SUMA -eq $CLOUD ]]
+    then
+    echo "SUMA servers or clints should not have cloud packages installed"
+else
+    :
+fi
 
 
 # Quantity of available updates
