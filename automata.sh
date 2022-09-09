@@ -41,16 +41,19 @@ fi
 grep -oP '(?<=identifier).*(?=Subscription)' updates.txt | grep -q "L3" && L3=1
 
 
-if [[ -d spacewalk-debug ]] || grep -q "^susemanager" rpm.txt || grep -q "^SUSE-Manager-Server-release" rpm.txt
+if [[ -d spacewalk-debug ]] | grep -q ^release-notes-susemanager rpm.txt | grep -q ^SUSE-Manager-Server-release rpm.txt
     then
     grep -o 'SUSE Manager release.*' basic-environment.txt && SUMA=1
-# Or checks if it is a SUMA Proxy or Minion
+# Or checks if it is a SUMA Proxy, Retail Proxy Branch or Minion
+elif grep -q "SUSE-Manager-Retail-Branch-Server-release " rpm.txt
+    then
+    echo "SUMA Retail Branch" && SUMA=2
 elif [[ -f plugin-susemanagerproxy.txt ]]
     then
-    echo "SUMA Proxy" && SUMA=2
-elif [[ -f plugin-susemanagerclient.txt ]] || grep -q "venv-salt-minion" rpm.txt
+    echo "SUMA Proxy" && SUMA=3
+elif [[ -f plugin-susemanagerclient.txt ]] || egrep "^venv-salt-minion" rpm.txt
     then
-    echo "SUMA Minion" && SUMA=3
+    echo "SUMA Minion" && SUMA=4
 # Checks if it is a SMT Server or Client
 elif grep -q "enabled" smt.txt
     then
@@ -67,7 +70,7 @@ elif grep -q "susecloud" updates.txt
     echo "Registered to the cloud:  $(grep -oP "(?<=^url: https://).*(?=.susecloud)" updates.txt)"
 elif grep -q "Not Registered" updates.txt
     then
-    echo -e "\x1B[01;91mLooks like this system is not registered to SCC. Please check the updates.txt file \x1B[0m"
+    echo -e "\x1B[01;91mThis system looks like to be not registered to SCC. Please check the updates.txt file \x1B[0m"
 elif [[ $L3 -eq 1 ]]
     then
     echo -e "\x1B[01;91mL3 systems are not supported by SUSE Technical Support \x1B[0m"
