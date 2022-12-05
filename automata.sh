@@ -15,6 +15,45 @@ echo $(egrep '^VERSION=' basic-environment.txt | cut -d "\"" -f2)
 echo "Kernel $(egrep '^Linux' basic-environment.txt | cut -d " " -f3)"
 
 
+
+#Subscription status
+if  egrep -q "ACTIVE" updates.txt
+    then
+    egrep -q "Standard Subscription" updates.txt && echo -e "\x1B[01;32mStandard Subscription\x1B[0m"
+    egrep -q "Priority Subscription" updates.txt && echo -e "\x1B[01;32mPriority Subscription\x1B[0m"
+# Checks for an expired subscription
+elif egrep -q '"subscription_status":"EXPIRED"' updates.txt
+    then
+    echo -e "\x1B[01;91mEXPIRED Subscription\x1B[0m"
+else
+    :
+fi
+
+#Uncommon subscriptions status
+grep -oP '(?<=identifier).*(?=Subscription)' updates.txt | grep -q "L3" && echo -e "\x1B[01;91mL3 systems are not supported by SUSE Technical Support \x1B[0m"
+egrep -q "Evaluation Subscription" updates.txt && echo -e "\x1B[01;91mEvaluation subscriptions are not supported by SUSE Technical Support \x1B[0m"
+egrep -q "Long Term Service Pack Support" updates.txt && echo -e "LTSS Subscription"
+egrep -q "Inherited Subscription" updates.txt && echo -e "Inherited Subscription, please check the updates.txt for details"
+
+
+#Checks if it is a SUMA-related system
+if [[ -d spacewalk-debug ]] | egrep -q ^release-notes-susemanager rpm.txt | egrep -q ^SUSE-Manager-Server-release rpm.txt
+    then
+    egrep -o 'SUSE Manager release.*' basic-environment.txt && SUMA=1
+elif egrep -q "SUSE-Manager-Retail-Branch-Server-release " rpm.txt
+    then
+    echo "SUMA Retail Branch" && SUMA=2
+elif [[ -f plugin-susemanagerproxy.txt ]]
+    then
+    echo "SUMA Proxy" && SUMA=3
+elif [[ -f plugin-susemanagerclient.txt ]] || egrep -q "^venv-salt-minion" rpm.txt
+    then
+    echo "SUMA Minion" && SUMA=4
+else
+    :
+fi
+
+
 # Cloud packages check
 if  egrep -q "cloud-regionsrv-client|regionServiceClientConfigEC2|regionServiceCertsEC2|cloud-regionsrv-client-plugin-gce|regionServiceClientConfigGCE|regionServiceCertsGCE|regionServiceClientConfigAzure|regionServiceCertsAzure" rpm.txt
     then
@@ -24,74 +63,44 @@ else
 fi
 
 
-#Subscription status
-if grep -q "ACTIVE" updates.txt
+egrep -q "susecloud" updates.txt && echo "Registered to the cloud:  $(grep -oP "(?<=^url: https://).*(?=.susecloud)" updates.txt)" && CLOUDREG=1
+
+
+if  egrep -q "susemanager:" updates.txt
     then
-    grep -q "Standard Subscription" updates.txt && echo -e "\x1B[01;32mStandard Subscription\x1B[0m"
-    grep -q "Priority Subscription" updates.txt && echo -e "\x1B[01;32mPriority Subscription\x1B[0m"
-# Checks for an expired subscription
-elif grep -q "EXPIRED" updates.txt
+    echo -e "System bootstrapped to SUSE Manager" && SUMA_REG=1
+elif egrep -q '"subscription_status":"ACTIVE"' updates.txt
     then
-    echo -e "\x1B[01;91mEXPIRED\x1B[0m"
+    echo -e "\x1B[01;32mSCC Active subscription\x1B[0m"
+elif egrep -q "Not Registered" updates.txt
+    then
+    echo -e "\x1B[01;91mThe system looks like to be not registered to SCC. Please check the updates.txt file \x1B[0m"
 else
     :
 fi
 
-#L3 Subscription status
-grep -oP '(?<=identifier).*(?=Subscription)' updates.txt | grep -q "L3" && L3=1
+
+#  SUMA Cloud client and packages check
 
 
-if [[ -d spacewalk-debug ]] | grep -q ^release-notes-susemanager rpm.txt | grep -q ^SUSE-Manager-Server-release rpm.txt
+if [[ $SUMA_REG -eq 1 ]] && [[ $SUMA -eq 4 ]] && [[ $CLOUDREG -eq 1 ]] && [[ $CLOUD -eq 1 ]]
     then
-    grep -o 'SUSE Manager release.*' basic-environment.txt && SUMA=1
-# Or checks if it is a SUMA Proxy, Retail Proxy Branch or Minion
-elif grep -q "SUSE-Manager-Retail-Branch-Server-release " rpm.txt
+    echo -e "\x1B[01;93mThe system looks like a properly registered SUMA PAYG client and cloud subscription provider, please verify updates.txt \x1B[0m"
+elif [[ $SUMA -eq 4 ]] && [[ $CLOUDREG -eq 1 ]] && [[ $CLOUD -eq 1 ]]
     then
-    echo "SUMA Retail Branch" && SUMA=2
-elif [[ -f plugin-susemanagerproxy.txt ]]
+    echo -e "\x1B[01;91mThe system is a PAYG client, registered and contacting only cloud instead of SUMA. \x1B[0m"
+elif [[ $SUMA -ge 1 ]] && [[ $CLOUD -eq 1 ]]
     then
-    echo "SUMA Proxy" && SUMA=3
-elif [[ -f plugin-susemanagerclient.txt ]] || egrep "^venv-salt-minion" rpm.txt
-    then
-    echo "SUMA Minion" && SUMA=4
-# Checks if it is a SMT Server or Client
-elif grep -q "enabled" smt.txt
-    then
-    echo "SMT Server"
-elif grep -q "smt-client" rpm.txt
-    then
-    echo "SMT Client"
-# Checks if it is a RMT Server
-elif [[ -f plugin-rmt.txt ]]
-    then
-    echo "RMT Server"
-elif grep -q "susecloud" updates.txt
-    then
-    echo "Registered to the cloud:  $(grep -oP "(?<=^url: https://).*(?=.susecloud)" updates.txt)"
-elif grep -q "Not Registered" updates.txt
-    then
-    echo -e "\x1B[01;91mThis system looks like to be not registered to SCC. Please check the updates.txt file \x1B[0m"
-elif [[ $L3 -eq 1 ]]
-    then
-    echo -e "\x1B[01;91mL3 systems are not supported by SUSE Technical Support \x1B[0m"
-else
-    echo "Please, manually check the updates.txt file"
-fi
-
-
-if [[ $SUMA -gt 1 ]] && [[ $CLOUD -eq 1 ]]
-    then
-    echo -e "\x1B[01;91mSUMA servers or clients should not have cloud packages installed \x1B[0m"
+    echo -e "\x1B[01;91mSUMA servers or BYOS clients should not have cloud packages installed \x1B[0m"
 else
     :
 fi
-
 
 # Quantity of available updates
-echo -e "\x1B[01;93m$(grep ^Found updates.txt | cut -d ":" -f1 | head -1)\x1B[0m"
+echo -e "\x1B[01;93m$(egrep ^Found updates.txt | cut -d ":" -f1 | head -1)\x1B[0m"
 
 # Shows if the kernel is tainted
-grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | grep -q "Tainted" && TAINTED=1
+grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | egrep -q "Tainted" && TAINTED=1
 
 if [[ $SUMA -eq 1 ]]
     then
@@ -124,7 +133,7 @@ errors()
     egrep -ria -e "error" -e "fail" -e "warning" -e "crash" -e "refused" -e "fatal" | sort -u > errors.txt
 }
 
-read -p 'Would you like to create an errors.txt file with unique ocurrences of errors, fails, warnings, crashes and refusals?  ' ERRORS
+read -p 'Create an errors.txt file with unique ocurrences of errors, fails, warnings, crashes and refusals?  ' ERRORS
 case "$ERRORS" in
     [yY][eE][sS]|[yY])
         errors
@@ -137,7 +146,7 @@ power()
     egrep -ria -e "shutdown" -e "reboot" | sort -u > power.txt
 }
 
-read -p 'Would you like to create a power.txt file with unique ocurrences of shutdown and reboot events?  ' POWER
+read -p 'Create a power.txt file with unique ocurrences of shutdown and reboot events?  ' POWER
 case "$POWER" in
     [yY][eE][sS]|[yY])
         power
@@ -151,9 +160,9 @@ ksar()
     then
         source $KSAR_PATH
     else
-        read -p 'Please, input the kSar run.sh path: ' KSAR_RUN
+        read -p 'Input the kSar run.sh path: ' KSAR_RUN
         read -p 'Input YES to create a permanent path saving it to ~/.config ' PERMANENT_PATH
-        grep -q YES <<< $PERMANENT_PATH &&
+        egrep -q YES <<< $PERMANENT_PATH &&
         echo "KSAR_RUN=${KSAR_RUN}" > $KSAR_PATH
     fi
 
@@ -162,5 +171,5 @@ ksar()
 
 read -p 'Input YES to open a sar file:  ' KSAR
 echo
-grep -q YES <<< $KSAR &&
+egrep -q YES <<< $KSAR &&
 ksar
