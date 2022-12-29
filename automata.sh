@@ -49,10 +49,10 @@ elif [[ -f plugin-susemanagerproxy.txt ]]
     echo "SUMA Proxy" && SUMA=3
 elif [[ -f plugin-susemanagerclient.txt ]] || egrep -q "^salt-minion" rpm.txt
     then
-    echo "SUMA Minion using regular salt service"
+    echo "SUMA Minion using regular salt service" && SUMA=4
 elif egrep -q "^venv-salt-minion" rpm.txt
     then
-    echo "SUMA Minion using venv-salt minion service"
+    echo "SUMA Minion using venv-salt minion service" && SUMA=4
 else
     :
 fi
