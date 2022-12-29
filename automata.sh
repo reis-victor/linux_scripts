@@ -7,6 +7,7 @@ echo "To easily use this script, add it to a folder and create an alias on your 
 # .config file containing KSAR_PATH
 KSAR_PATH=~/.config/automata
 
+
 #System version
 echo ""
 echo $(egrep '^VERSION=' basic-environment.txt | cut -d "\"" -f2)
@@ -46,12 +47,16 @@ elif egrep -q "SUSE-Manager-Retail-Branch-Server-release " rpm.txt
 elif [[ -f plugin-susemanagerproxy.txt ]]
     then
     echo "SUMA Proxy" && SUMA=3
-elif [[ -f plugin-susemanagerclient.txt ]] || egrep -q "^venv-salt-minion" rpm.txt
+elif [[ -f plugin-susemanagerclient.txt ]] || egrep -q "^salt-minion" rpm.txt
     then
-    echo "SUMA Minion" && SUMA=4
+    echo "SUMA Minion using regular salt service"
+elif egrep -q "^venv-salt-minion" rpm.txt
+    then
+    echo "SUMA Minion using venv-salt minion service"
 else
     :
 fi
+
 
 
 # Cloud packages check
@@ -96,6 +101,8 @@ else
     :
 fi
 
+
+
 # Quantity of available updates
 echo -e "\x1B[01;93m$(egrep ^Found updates.txt | cut -d ":" -f1 | head -1)\x1B[0m"
 
@@ -128,30 +135,20 @@ else
 fi
 
 # Creates the file errors.txt with the ocurrences with the most common words that indicate an issue
-errors()
-{
-    egrep -ria -e "error" -e "fail" -e "warning" -e "crash" -e "refused" -e "fatal" | sort -u > errors.txt
-}
-
 read -p 'Create an errors.txt file with unique ocurrences of errors, fails, warnings, crashes and refusals?  ' ERRORS
-case "$ERRORS" in
+    case "$ERRORS" in
     [yY][eE][sS]|[yY])
-        errors
+        egrep -ria -e "error" -e "fail" -e "warning" -e "crash" -e "refused" -e "fatal" -e "unable" | sort -u > errors.txt
         ;;
-esac
+    esac
 
 # Creates the file power.txt with power-related ocurrences
-power()
-{
-    egrep -ria -e "shutdown" -e "reboot" | sort -u > power.txt
-}
-
 read -p 'Create a power.txt file with unique ocurrences of shutdown and reboot events?  ' POWER
-case "$POWER" in
+    case "$POWER" in
     [yY][eE][sS]|[yY])
-        power
+        egrep -ria -e "shutdown" -e "reboot" | sort -u > power.txt
         ;;
-esac
+    esac
 
 # Adds ksar path and/or open the ksar app
 ksar()
