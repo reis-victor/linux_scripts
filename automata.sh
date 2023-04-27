@@ -35,13 +35,14 @@ grep -oP '(?<=identifier).*(?=Subscription)' updates.txt | grep -q "L3" && echo 
 egrep -q "Evaluation Subscription" updates.txt && echo -e "\x1B[01;91mEvaluation subscriptions are not supported by SUSE Technical Support \x1B[0m"
 egrep -q "Long Term Service Pack Support" updates.txt && echo -e "LTSS Subscription"
 egrep -q "Inherited Subscription" updates.txt && echo -e "Inherited Subscription, please check the updates.txt for details"
+egrep -q "Partner" updates.txt && echo -e "\x1B[01;91mPartner subscriptions only have L3 Support \x1B[0m"
 
 
 #Checks if it is a SUMA-related system
 if [[ -d spacewalk-debug ]] | egrep -q ^release-notes-susemanager rpm.txt | egrep -q ^SUSE-Manager-Server-release rpm.txt
     then
     egrep -o 'SUSE Manager release.*' basic-environment.txt && SUMA=1
-elif egrep -q "SUSE-Manager-Retail-Branch-Server-release " rpm.txt
+elif egrep -q "SUSE-Manager-Retail-Branch-Server-release" rpm.txt
     then
     echo "SUMA Retail Branch" && SUMA=2
 elif [[ -f plugin-susemanagerproxy.txt ]]
@@ -57,6 +58,8 @@ else
     :
 fi
 
+#RMT Server check
+egrep -q "rmt-server" rpm.txt && echo -e "\x1B[01;32mRMT Server\x1B[0m"
 
 
 # Cloud packages check
