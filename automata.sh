@@ -4,10 +4,6 @@
 
 echo "To easily use this script, add it to a folder and create an alias on your ~/.bashrc file. Then, execute the alias name within the extracted supportconfig folder".
 
-# .config file containing KSAR_PATH
-KSAR_PATH=~/.config/automata
-
-
 #System version
 echo ""
 echo $(egrep '^VERSION=' basic-environment.txt | cut -d "\"" -f2)
@@ -30,8 +26,11 @@ else
     :
 fi
 
+#Cloud provider (Only tested on Microsoft and Amazon instances)
+egrep -q "Microsoft|Amazon|Google" basic-environment.txt && CLOUD_PROVIDER=1
+
 #Uncommon subscriptions status
-grep -oP '(?<=identifier).*(?=Subscription)' updates.txt | grep -q "L3" && echo -e "\x1B[01;91mL3 systems are not supported by SUSE Technical Support \x1B[0m"
+grep -oP '(?<=identifier).*(?=Subscription)' updates.txt | grep -q "L3" && echo -e "\x1B[01;91mL3 systems are only supported if the issue is a bug \x1B[0m"
 egrep -q "Evaluation Subscription" updates.txt && echo -e "\x1B[01;91mEvaluation subscriptions are not supported by SUSE Technical Support \x1B[0m"
 egrep -q "Long Term Service Pack Support" updates.txt && echo -e "LTSS Subscription"
 egrep -q "Inherited Subscription" updates.txt && echo -e "Inherited Subscription, please check the updates.txt for details"
@@ -74,6 +73,19 @@ fi
 egrep -q "susecloud" updates.txt && echo "Registered to the cloud:  $(grep -oP "(?<=^url: https://).*(?=.susecloud)" updates.txt)" && CLOUDREG=1
 
 
+# Cloud instance check
+if [[ $CLOUD -eq 1 ]] && [[ $CLOUDREG -eq 1 ]]
+    then
+    echo -e "\x1B[01;91mThis system looks like a PAYG client, thus, it is only supported by its cloud vendor\x1B[0m"
+elif
+    [[ $CLOUD_PROVIDER -eq 1 ]]
+    then
+    echo -e "This system looks like a BYOS instance from: $(grep -oP "Manufacturer: \K.*" basic-environment.txt)"
+else
+    :
+fi
+
+
 if  egrep -q "susemanager:" updates.txt
     then
     echo -e "System bootstrapped to SUSE Manager" && SUMA_REG=1
@@ -89,8 +101,6 @@ fi
 
 
 #  SUMA Cloud client and packages check
-
-
 if [[ $SUMA_REG -eq 1 ]] && [[ $SUMA -eq 4 ]] && [[ $CLOUDREG -eq 1 ]] && [[ $CLOUD -eq 1 ]]
     then
     echo -e "\x1B[01;93mThe system looks like a properly registered SUMA PAYG client and cloud subscription provider, please verify updates.txt \x1B[0m"
@@ -103,7 +113,6 @@ elif [[ $SUMA -ge 1 ]] && [[ $CLOUD -eq 1 ]]
 else
     :
 fi
-
 
 
 # Quantity of available updates
@@ -126,8 +135,8 @@ fi
 
 if [[ $TAINTED -eq 1 ]]
     then
+    echo -e "Systems with tainted kernel can be non-supported"
     read -p 'Show loaded proprietary modules? ' SHOW_TAINTED
-
     case "$SHOW_TAINTED" in
     [yY][eE][sS]|[yY])
         sed -n '/Status/,/^#/p' basic-health-check.txt | cut -d "#" -f3
@@ -152,24 +161,3 @@ read -p 'Create a power.txt file with unique ocurrences of shutdown and reboot e
         egrep -ria -e "shutdown" -e "reboot" | sort -u > power.txt
         ;;
     esac
-
-# Adds ksar path and/or open the ksar app
-ksar()
-{
-    if [[ -e $KSAR_PATH ]]
-    then
-        source $KSAR_PATH
-    else
-        read -p 'Input the kSar run.sh path: ' KSAR_RUN
-        read -p 'Input YES to create a permanent path saving it to ~/.config ' PERMANENT_PATH
-        egrep -q YES <<< $PERMANENT_PATH &&
-        echo "KSAR_RUN=${KSAR_RUN}" > $KSAR_PATH
-    fi
-
-    /bin/bash $KSAR_RUN
-}
-
-read -p 'Input YES to open a sar file:  ' KSAR
-echo
-egrep -q YES <<< $KSAR &&
-ksar
