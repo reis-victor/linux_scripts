@@ -31,8 +31,8 @@ else
 fi
 
 #Cloud provider
-egrep -q "Microsoft|Amazon|Google" basic-environment.txt && CLOUDSYSTEM=1
-CLOUDPROVIDER=$(grep -oP "Manufacturer: \K.*" basic-environment.txt)
+egrep -q "Microsoft|Amazon|Google" basic-environment.txt && cloudsystem=1
+cloudprovider=$(grep -oP "Manufacturer: \K.*" basic-environment.txt)
 
 
 #Uncommon subscriptions status
@@ -46,14 +46,14 @@ egrep -q "Partner" updates.txt && echo -e "Partner subscription"
 #Checks if it is a SUMA-related system
 if [[ -f plugin-susemanagerclient.txt ]] && egrep -q "susemanager:" updates.txt
     then
-        echo -e "The system looks like to be bootstrapped to SUSE Manager" && SUMA_REG=1
+        echo -e "The system looks like to be bootstrapped to SUSE Manager" && suma_reg=1
         if
           egrep -q "^salt-minion" rpm.txt
           then
-              echo "Classic Salt installed" && SUMA=4
+              echo "Classic Salt installed" && suma=4
         elif egrep -q "^venv-salt-minion" rpm.txt
           then
-             echo "Salt bundle installed" && SUMA=4
+             echo "Salt bundle installed" && suma=4
        else
     :
         fi
@@ -64,16 +64,16 @@ fi
 
 if [[ -d spacewalk-debug ]] | egrep -q ^release-notes-susemanager rpm.txt | egrep -q ^SUSE-Manager-Server-release rpm.txt
     then
-    egrep -o 'SUSE Manager release.*' basic-environment.txt && SUMA=1
+    egrep -o 'SUSE Manager release.*' basic-environment.txt && suma=1
 elif egrep -q "SUSE-Manager-Retail-Branch-Server-release" rpm.txt
     then
-    echo "SUMA Retail Branch" && SUMA=2
+    echo "SUMA Retail Branch" && suma=2
 elif [[ -f plugin-susemanagerproxy.txt ]]
     then
-    echo "SUMA Proxy" && SUMA=3
+    echo "SUMA Proxy" && suma=3
 elif egrep -q "^venv-salt-minion" rpm.txt
     then
-    echo "Salt bundle installed" && SUMA=4
+    echo "Salt bundle installed" && suma=4
 else
     :
 fi
@@ -85,7 +85,7 @@ egrep -q "rmt-server" rpm.txt && echo -e "\x1B[01;32mRMT Server\x1B[0m"
 # Cloud packages check
 if  egrep -q "cloud-regionsrv-client|regionServiceClientConfigEC2|regionServiceCertsEC2|cloud-regionsrv-client-plugin-gce|regionServiceClientConfigGCE|regionServiceCertsGCE|regionServiceClientConfigAzure|regionServiceCertsAzure|regionServiceClientConfigSAPEC2" rpm.txt
     then
-    echo "Cloud packages installed" && CLOUD=1
+    echo "Cloud packages installed" && cloud=1
 else
     echo "Cloud packages not installed"
 fi
@@ -95,13 +95,13 @@ egrep -q "susecloud" updates.txt && echo "Registered to the cloud:  $(grep -oP "
 
 
 # Cloud instance check
-if  [[ $CLOUDREG -eq 1 ]] && [[ SUMA_REG -ne 1 ]]
+if  [[ $cloudreg -eq 1 ]] && [[ SUMA_REG -ne 1 ]]
     then
-    echo -e "\x1B[01;91mThis system looks like a PAYG client, thus, it is only supported by its cloud vendor\x1B[0m" && PAYG=1
+    echo -e "\x1B[01;91mThis system looks like a PAYG client, thus, it is only supported by its cloud vendor\x1B[0m" && payg=1
 elif
-    [[ $CLOUDSYSTEM -eq 1 ]]
+    [[ $cloudsystem -eq 1 ]]
     then
-    echo -e "This system looks like a BYOS instance from: $(grep -oP "Manufacturer: \K.*" basic-environment.txt)" && BYOS=1
+    echo -e "This system looks like a BYOS instance from: $(grep -oP "Manufacturer: \K.*" basic-environment.txt)" && byos=1
 else
     :
 fi
@@ -120,10 +120,10 @@ fi
 
 
 #  SUMA Cloud client and packages check
-if [[ $SUMA_REG -eq 1 ]] && [[ $SUMA -eq 4 ]] && [[ $CLOUDREG -eq 1 ]] && [[ $CLOUD -eq 1 ]]
+if [[ $suma_reg -eq 1 ]] && [[ $suma -eq 4 ]] && [[ $cloudreg -eq 1 ]] && [[ $cloud -eq 1 ]]
     then
     echo -e "\x1B[01;93mThe system looks like a properly registered SUMA PAYG client and cloud subscription provider, please verify updates.txt \x1B[0m"
-elif [[ $SUMA -eq 4 ]] && [[ $CLOUDREG -eq 1 ]] && [[ $CLOUD -eq 1 ]]
+elif [[ $suma -eq 4 ]] && [[ $cloudreg -eq 1 ]] && [[ $cloud -eq 1 ]]
     then
     echo -e "\x1B[01;91mThe system is a PAYG instance, registered and contacting only cloud instead of SUMA. \x1B[0m"
 else
@@ -132,14 +132,14 @@ fi
 
 
 # SUMA guestregister.service check
-GUESTREGISTER=$(grep /usr/lib/systemd/system/guestregister.service systemd-status.txt | cut -d ";" -f2)
+guestregister=$(grep /usr/lib/systemd/system/guestregister.service systemd-status.txt | cut -d ";" -f2)
 
-if [[ $SUMA -eq 4 ]]
+if [[ $suma -eq 4 ]]
     then
-        if [[ $PAYG -eq 1 ]] && [[ $GUESTREGISTER == " disabled" ]]
+        if [[ $payg -eq 1 ]] && [[ $guestregister == " disabled" ]]
             then
                 echo "A SUMA PAYG instance should have the guestregister.service enabled"
-        elif [[ $BYOS -eq 1 ]] && [[ $GUESTREGISTER == " enabled" ]]
+        elif [[ $byos -eq 1 ]] && [[ $guestregister == " enabled" ]]
             then
                 echo "A SUMA BYOS instance should have the guestregister.service disabled"
         else
@@ -151,14 +151,14 @@ fi
 
 
 #Azure regionsrv-enabler-azure.timer check
-AZURETIMER=$(awk '/^regionsrv-enabler-azure.timer/ {print $2}' systemd.txt)
+azuretimer=$(awk '/^regionsrv-enabler-azure.timer/ {print $2}' systemd.txt)
 
-if [[ $SUMA -eq 4 ]] && [[ $CLOUDPROVIDER == " Microsoft Corporation" ]]
+if [[ $suma -eq 4 ]] && [[ $cloudprovider == " Microsoft Corporation" ]]
     then
-        if [[ $PAYG -eq 1 ]] && [[ $AZURETIMER == "disabled" ]]
+        if [[ $payg -eq 1 ]] && [[ $azuretimer == "disabled" ]]
             then
                 echo "A SUMA PAYG instance should have the regionsrv-enabler-azure.timer enabled"
-        elif [[ $BYOS -eq 1 ]] && [[ $AZURETIMER == "enabled" ]]
+        elif [[ $byos -eq 1 ]] && [[ $azuretimer == "enabled" ]]
             then
                 echo "A SUMA BYOS instance should have the regionsrv-enabler-azure.timer disabled"
         else
@@ -179,12 +179,12 @@ awk '/df -h/,/^$/' basic-health-check.txt | awk '/[9][0-9](\.[0-9]+)?%|100(\.[0]
 echo "=================================================================================================="
 
 # Shows if the kernel is tainted
-grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | egrep -q "Tainted" && TAINTED=1
+grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | egrep -q "Tainted" && tainted=1
 
-if [[ $SUMA -eq 1 ]]
+if [[ $suma -eq 1 ]]
     then
     read -p 'Show Salt minions key status? ' SALTKEYS
-    case "$SALTKEYS" in
+    case "$saltkeys" in
     [yY][eE][sS]|[yY])
         sed -n '/Accepted/,/^ *$/p' plugin-saltminionskeys.txt
         ;;
@@ -193,10 +193,10 @@ else
     :
 fi
 
-if [[ $TAINTED -eq 1 ]]
+if [[ $tainted -eq 1 ]]
     then
-    read -p 'Systems with tainted kernel could be non-supported. Show loaded proprietary modules? ' SHOW_TAINTED
-    case "$SHOW_TAINTED" in
+    read -p 'Systems with tainted kernel could be non-supported. Show loaded proprietary modules? ' show_tainted
+    case "$show_tainted" in
     [yY][eE][sS]|[yY])
         sed -n '/Status/,/^#/p' basic-health-check.txt | cut -d "#" -f3
         ;;
@@ -206,8 +206,8 @@ else
 fi
 
 # Creates the file errors.txt with the ocurrences with the most common words that indicate an issue
-read -p 'Create an errors.txt file with unique ocurrences of errors, fails, warnings, crashes and refusals?  ' ERRORS
-    case "$ERRORS" in
+read -p 'Create an errors.txt file with unique ocurrences of errors, fails, warnings, crashes and refusals?  ' errors
+    case "$errors" in
     [yY][eE][sS]|[yY])
         egrep -ria -e "error" -e "fail" -e "warning" -e "crash" -e "refused" -e "fatal" -e "unable" | sort -u > errors.txt
         ;;
