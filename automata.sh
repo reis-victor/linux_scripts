@@ -9,7 +9,7 @@ echo ""
 echo $(egrep '^VERSION=' basic-environment.txt | cut -d "\"" -f2)
 
 #Baseproduct
-grep -o "baseproduct.*" updates.txt | cut -d' ' -f3
+grep -o "baseproduct.*" updates.txt | head -n1 | cut -d' ' -f3
 
 # System kernel and its year
 paste <(egrep '^Linux' basic-environment.txt | cut -d " " -f3)  <(grep -o "UTC.*" basic-environment.txt | cut -d' ' -f2)
