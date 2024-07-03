@@ -12,7 +12,7 @@ echo $(egrep '^VERSION=' basic-environment.txt | cut -d "\"" -f2)
 grep -o "baseproduct.*" updates.txt | head -n1 | cut -d' ' -f3
 
 # System kernel and its year
-paste <(egrep '^Linux' basic-environment.txt | cut -d " " -f3)  <(grep -o "UTC.*" basic-environment.txt | cut -d' ' -f2)
+awk '/^Linux/ {print "Kernel: " $3 ", " gensub(/.*(20[0-9]{2}).*/, "\\1", "g", $0)}' basic-environment.txt
 
 #Proxy check
 grep "^PROXY_ENABLED" updates.txt
