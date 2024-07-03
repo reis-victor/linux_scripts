@@ -79,7 +79,11 @@ else
 fi
 
 #RMT Server check
-egrep -q "rmt-server" rpm.txt && echo -e "\x1B[01;32mRMT Server\x1B[0m"
+if egrep -q "rmt-server" rpm.txt && [[ -f output-rmt.txt ]]
+    then echo -e "\x1B[01;32mRMT Server\x1B[0m"
+else
+    :
+fi
 
 
 # Cloud packages check
@@ -91,7 +95,7 @@ else
 fi
 
 
-egrep -q "susecloud" updates.txt && echo "Registered to the cloud:  $(grep -oP "(?<=^url: https://).*(?=.susecloud)" updates.txt)" && CLOUDREG=1
+egrep -q "susecloud" updates.txt && echo "Registered to the cloud:  $(grep -oP "(?<=^url: https://).*(?=.susecloud)" updates.txt)" && cloudreg=1
 
 
 # Cloud instance check
@@ -102,18 +106,6 @@ elif
     [[ $cloudsystem -eq 1 ]]
     then
     echo -e "This system looks like a BYOS instance from: $(grep -oP "Manufacturer: \K.*" basic-environment.txt)" && byos=1
-else
-    :
-fi
-
-
-
-if egrep -q '"subscription_status":"ACTIVE"' updates.txt
-    then
-    echo -e "\x1B[01;32mSCC Active subscription\x1B[0m"
-elif egrep -q "Not Registered" updates.txt
-    then
-    echo -e "\x1B[01;91mThe system looks like to be not registered to SCC. Please check the updates.txt file \x1B[0m"
 else
     :
 fi
@@ -169,7 +161,6 @@ else
 fi
 
 
-
 # Quantity of available updates
 echo -e "\x1B[01;93m$(egrep ^Found updates.txt | cut -d ":" -f1 | head -1)\x1B[0m"
 echo
@@ -183,7 +174,7 @@ grep -oP '(?<=Status -- ).*(?= )' basic-health-check.txt | egrep -q "Tainted" &&
 
 if [[ $suma -eq 1 ]]
     then
-    read -p 'Show Salt minions key status? ' SALTKEYS
+    read -p 'Show Salt minions key status? ' saltkeys
     case "$saltkeys" in
     [yY][eE][sS]|[yY])
         sed -n '/Accepted/,/^ *$/p' plugin-saltminionskeys.txt
